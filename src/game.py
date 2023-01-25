@@ -19,6 +19,8 @@ class Game:
         self.obstacles = obstacles
         self.env = gymnasium.make('snake_gym/Snake-v1.0', size=size, obstacles=obstacles)
 
+        pygame.init()
+
         self.screen = pygame.display.set_mode(window_size)
         self.clock = pygame.time.Clock()
 
