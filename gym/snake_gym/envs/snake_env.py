@@ -29,7 +29,7 @@ class Rewards(Enum):
     ALIVE = 1
     FED = 10
     DIED = -100
-    IDLE = 0
+    IDLE = -0.5
 
 
 class SnakeEnv(gym.Env):
@@ -53,12 +53,13 @@ class SnakeEnv(gym.Env):
             Move.NOOP: None
         }
         self._empty_poses:int = 0
+        self.prev_action: np.ndarray | None = None
 
     def _get_obs(self):
         return {"map": self._map}
 
     def _get_info(self):
-        return {"empty_cells_left": ...}
+        return {"empty_cells_left": self._empty_poses}
 
     def _get_random_empty_pos(self):
         empty = np.vstack(np.where(self._map == Tile.EMPTY.value)).T
@@ -99,7 +100,10 @@ class SnakeEnv(gym.Env):
         head = self._snake[0]
         action = self._action_to_move[action]
         if action is None:
-            return self._get_obs(), Rewards.IDLE.value, False, False, self._get_info()
+            if self.prev_action is None:
+                return self._get_obs(), Rewards.IDLE.value, False, False, self._get_info()
+            action = self.prev_action
+        self.prev_action = action
         next_head = tuple((head + action) % self._size)
         if (next_head in self._snake and next_head != self._snake[-1]) or self._map[next_head] == Tile.OBSTACLE.value:
             observation = self._get_obs()
