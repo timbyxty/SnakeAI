@@ -1,6 +1,6 @@
 from enum import Enum, auto
 from collections import deque
-from typing import Optional, Union
+from typing import Union
 import gymnasium as gym
 import numpy as np
 from gymnasium.core import RenderFrame
