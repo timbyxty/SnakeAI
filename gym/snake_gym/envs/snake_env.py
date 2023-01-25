@@ -1,9 +1,7 @@
 from enum import Enum, auto
 from collections import deque
-from typing import Union
 import gymnasium as gym
 import numpy as np
-from gymnasium.core import RenderFrame
 
 
 class Tile(Enum):
@@ -52,7 +50,7 @@ class SnakeEnv(gym.Env):
             Move.RIGHT: np.array([1, 0]),
             Move.NOOP: None
         }
-        self._empty_poses:int = 0
+        self._empty_poses: int = 0
         self.prev_action: np.ndarray | None = None
 
     def _get_obs(self):
@@ -81,7 +79,6 @@ class SnakeEnv(gym.Env):
                 obstacle_pos = self._get_random_empty_pos()
                 self._map[obstacle_pos] = Tile.OBSTACLE.value
                 self._empty_poses -= 1
-
 
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
@@ -131,5 +128,5 @@ class SnakeEnv(gym.Env):
 
         return observation, reward.value, False, truncated, info
 
-    def render(self) -> Union[RenderFrame, list[RenderFrame], None]:
+    def render(self):
         return self._map
