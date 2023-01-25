@@ -15,14 +15,6 @@ class Tile(Enum):
 TILE_COUNT = 5
 
 
-class Move(Enum):
-    LEFT = auto()
-    UP = auto()
-    DOWN = auto()
-    RIGHT = auto()
-    NOOP = None
-
-
 class Rewards(Enum):
     ALIVE = 1
     FED = 10
@@ -44,11 +36,11 @@ class SnakeEnv(gym.Env):
         })
         self.action_space = gym.spaces.Discrete(4)
         self._action_to_move = {
-            Move.LEFT: np.array([-1, 0]),
-            Move.UP: np.array([0, -1]),
-            Move.DOWN: np.array([0, 1]),
-            Move.RIGHT: np.array([1, 0]),
-            Move.NOOP: None
+            0: np.array([-1, 0]),
+            1: np.array([0, -1]),
+            2: np.array([1, 0]),
+            3: np.array([0, 1]),
+            None: None
         }
         self._empty_poses: int = 0
         self.prev_action: np.ndarray | None = None
