@@ -1,5 +1,4 @@
 .idea
-src/__pycache__
+**__pycache__
 gym/build
 gym/snake_gym.egg-info
-gym/snake_gym/__pycache__
