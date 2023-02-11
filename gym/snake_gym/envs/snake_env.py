@@ -74,6 +74,7 @@ class SnakeEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
+        np.random.seed(seed)
         self._empty_poses = np.prod(self._size)
         self._map.fill(Tile.EMPTY.value)
         self._set_snake_head()
