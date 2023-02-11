@@ -2,3 +2,4 @@
 **__pycache__
 gym/build
 gym/snake_gym.egg-info
+.snake
