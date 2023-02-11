@@ -26,13 +26,18 @@ class Game:
 
     def play(self):
         observation, info = self.env.reset()
+        self._draw(observation['map'])
+        self.clock.tick(self.speed)
+        pygame.display.flip()
+        truncated = False
         while True:
-            action = self.agent(observation)
+            if not truncated:
+                action = self.agent(observation)
 
-            observation, reward, done, _, info = self.env.step(action)
+                observation, reward, done, truncated, info = self.env.step(action)
 
-            if done:
-                break
+                if done:
+                    break
             self._draw(observation['map'])
             self.clock.tick(self.speed)
             pygame.display.flip()
