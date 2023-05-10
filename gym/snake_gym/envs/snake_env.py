@@ -1,7 +1,11 @@
 from enum import Enum, auto
 from collections import deque
+import random
+from copy import deepcopy
+from typing import Optional, Union
 import gymnasium as gym
 import numpy as np
+from gymnasium.core import RenderFrame
 
 
 class Tile(Enum):
@@ -10,9 +14,18 @@ class Tile(Enum):
     OBSTACLE = 2
     HEAD = 3
     BODY = 4
+    TAIL = 5
 
 
-TILE_COUNT = 5
+TILE_COUNT = 6
+
+
+class Move(Enum):
+    NOOP = None
+    LEFT = 0
+    UP = 1
+    RIGHT = 2
+    DOWN = 3
 
 
 class Rewards(Enum):
@@ -30,24 +43,23 @@ class SnakeEnv(gym.Env):
         self._obstacles: bool = obstacles
         self._obstacles_limit = np.prod(self._size) // 25
         self._map = np.zeros(self._size, dtype=np.int8)
-
+        # self.observation_space = gym.spaces.Space(size, np.int8)
         self.observation_space = gym.spaces.Box(0, TILE_COUNT, shape=self._size, dtype=np.int8)
         self.action_space = gym.spaces.Discrete(4)
         self._action_to_move = {
-            0: np.array([-1, 0]),
-            1: np.array([0, -1]),
-            2: np.array([1, 0]),
-            3: np.array([0, 1]),
-            None: None
+            Move.LEFT: np.array([-1, 0]),
+            Move.UP: np.array([0, -1]),
+            Move.DOWN: np.array([0, 1]),
+            Move.RIGHT: np.array([1, 0]),
+            Move.NOOP: None
         }
-        self._empty_poses: int = 0
-        self.prev_action: np.ndarray | None = None
+        self._empty_poses:int = 0
 
     def _get_obs(self):
         return self._map
 
     def _get_info(self):
-        return {"empty_cells_left": self._empty_poses}
+        return {"empty_cells_left": ...}
 
     def _get_random_empty_pos(self):
         empty = np.vstack(np.where(self._map == Tile.EMPTY.value)).T
@@ -70,9 +82,9 @@ class SnakeEnv(gym.Env):
                 self._map[obstacle_pos] = Tile.OBSTACLE.value
                 self._empty_poses -= 1
 
+
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
-        np.random.seed(seed)
         self._empty_poses = np.prod(self._size)
         self._map.fill(Tile.EMPTY.value)
         self._set_snake_head()
@@ -88,10 +100,7 @@ class SnakeEnv(gym.Env):
         head = self._snake[0]
         action = self._action_to_move[action]
         if action is None:
-            if self.prev_action is None:
-                return self._get_obs(), Rewards.IDLE.value, False, False, self._get_info()
-            action = self.prev_action
-        self.prev_action = action
+            return self._get_obs(), Rewards.IDLE.value, False, False, self._get_info()
         next_head = tuple((head + action) % self._size)
         if (next_head in self._snake and next_head != self._snake[-1]) or self._map[next_head] == Tile.OBSTACLE.value:
             observation = self._get_obs()
@@ -109,15 +118,19 @@ class SnakeEnv(gym.Env):
             if self._empty_poses != 0:
                 self._set_food()
             else:
-                truncated = True
+                observation = self._get_obs()
+                info = self._get_info()
+                return observation, reward.value, True, True, info
         else:
             self._map[self._snake.pop()] = Tile.EMPTY.value
         self._map[next_head] = Tile.HEAD.value
+        if len(self._snake) != 1:
+            self._map[self._snake[-1]] = Tile.TAIL.value
 
         observation = self._get_obs()
         info = self._get_info()
 
         return observation, reward.value, False, truncated, info
 
-    def render(self):
+    def render(self) -> Union[RenderFrame, list[RenderFrame], None]:
         return self._map
