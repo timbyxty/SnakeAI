@@ -41,7 +41,7 @@ class Game:
                 prev_observation = observation.copy()
                 observation, reward, done, truncated, info = self.env.step(action)
                 replay.add(prev_observation, action, reward, observation.copy(), done)
-                self.score += reward == 10
+                self.score += reward
                 if done:
                     break
             if self.draw:
