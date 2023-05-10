@@ -115,7 +115,7 @@ class SnakeEnv(gym.Env):
         self._map[head] = Tile.BODY.value
 
         if self._map[next_head] == Tile.FOOD.value:
-            reward = Rewards.FED
+            reward = Rewards.FED.value
             self._empty_poses -= 1
             if self._empty_poses != 0:
                 self._set_food()
