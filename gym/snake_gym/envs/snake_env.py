@@ -31,9 +31,7 @@ class SnakeEnv(gym.Env):
         self._obstacles_limit = np.prod(self._size) // 25
         self._map = np.zeros(self._size, dtype=np.int8)
 
-        self.observation_space = gym.spaces.Dict({
-            "map": gym.spaces.Box(0, TILE_COUNT, shape=self._size, dtype=np.int8)
-        })
+        self.observation_space = gym.spaces.Box(0, TILE_COUNT, shape=self._size, dtype=np.int8)
         self.action_space = gym.spaces.Discrete(4)
         self._action_to_move = {
             0: np.array([-1, 0]),
@@ -46,7 +44,7 @@ class SnakeEnv(gym.Env):
         self.prev_action: np.ndarray | None = None
 
     def _get_obs(self):
-        return {"map": self._map}
+        return self._map
 
     def _get_info(self):
         return {"empty_cells_left": self._empty_poses}
