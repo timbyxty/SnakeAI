@@ -16,10 +16,10 @@ TILE_COUNT = 5
 
 
 class Rewards(Enum):
-    ALIVE = 1
-    FED = 10
-    DIED = -100
-    IDLE = -0.5
+    ALIVE = -1
+    FED = 100
+    DIED = -1000
+    IDLE = 0
 
 
 class SnakeEnv(gym.Env):
