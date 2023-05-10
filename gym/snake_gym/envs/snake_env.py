@@ -7,7 +7,6 @@ import gymnasium as gym
 import numpy as np
 from gymnasium.core import RenderFrame
 
-
 class Tile(Enum):
     EMPTY = 0
     FOOD = 1
@@ -40,6 +39,7 @@ class SnakeEnv(gym.Env):
     def __init__(self, size=(5, 5), obstacles=False):
         self._size = np.array(size)
         self._snake: deque = deque()
+        self.head_history = []
         self._obstacles: bool = obstacles
         self._obstacles_limit = np.prod(self._size) // 25
         self._map = np.zeros(self._size, dtype=np.int8)
@@ -110,8 +110,10 @@ class SnakeEnv(gym.Env):
         reward = Rewards.ALIVE
         truncated = False
 
+
         self._snake.appendleft(next_head)
         self._map[head] = Tile.BODY.value
+
         if self._map[next_head] == Tile.FOOD.value:
             reward = Rewards.FED
             self._empty_poses -= 1
@@ -121,8 +123,14 @@ class SnakeEnv(gym.Env):
                 observation = self._get_obs()
                 info = self._get_info()
                 return observation, reward.value, True, True, info
+            self.head_history.clear()
         else:
             self._map[self._snake.pop()] = Tile.EMPTY.value
+            if next_head in self.head_history:
+                reward -= 1
+            self.head_history.append(next_head)
+        if len(self.head_history) > 5:
+            self.head_history.pop(0)
         self._map[next_head] = Tile.HEAD.value
         if len(self._snake) != 1:
             self._map[self._snake[-1]] = Tile.TAIL.value
