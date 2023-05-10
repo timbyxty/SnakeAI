@@ -1,7 +1,7 @@
 import gymnasium
 import pygame.event
 from snake_gym import Tile
-
+from utils import ReplayBuffer
 
 class Game:
     _tile_to_color = {
@@ -12,7 +12,8 @@ class Game:
         Tile.HEAD.value: pygame.Color(158, 130, 17),
         Tile.TAIL.value: pygame.Color(229, 198, 72)
     }
-    def __init__(self, size, window_size, agent, speed=10, obstacles=False, draw=True):
+
+    def __init__(self, size, window_size, agent, speed=10, obstacles=False, draw=True, save_game=False):
         self.size = size
         self.speed = speed
         self.agent = agent
@@ -33,11 +34,13 @@ class Game:
             self.clock.tick(self.speed)
             pygame.display.flip()
         truncated = False
+        replay = ReplayBuffer(1000)
         while True:
             if not truncated:
                 action = self.agent(observation)
-
+                prev_observation = observation.copy()
                 observation, reward, done, truncated, info = self.env.step(action)
+                replay.add(prev_observation, action, reward, observation.copy(), done)
                 self.score += reward == 10
                 if done:
                     break
@@ -45,6 +48,7 @@ class Game:
                 self._draw(observation)
                 self.clock.tick(self.speed)
                 pygame.display.flip()
+        replay.save(self.agent._name)
         return self.score
 
     def _draw(self, state):

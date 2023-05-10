@@ -5,7 +5,7 @@ import time
 
 class NaiveAgent:
     queue = []
-
+    _name = "Naive"
     @staticmethod
     def get_pos(map, value):
         for x, row in enumerate(map):
