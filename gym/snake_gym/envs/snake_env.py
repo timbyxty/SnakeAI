@@ -107,7 +107,7 @@ class SnakeEnv(gym.Env):
             info = self._get_info()
             return observation, Rewards.DIED.value, True, False, info
 
-        reward = Rewards.ALIVE
+        reward = Rewards.ALIVE.value
         truncated = False
 
 
@@ -122,7 +122,7 @@ class SnakeEnv(gym.Env):
             else:
                 observation = self._get_obs()
                 info = self._get_info()
-                return observation, reward.value, True, True, info
+                return observation, reward, True, True, info
             self.head_history.clear()
         else:
             self._map[self._snake.pop()] = Tile.EMPTY.value
@@ -138,7 +138,7 @@ class SnakeEnv(gym.Env):
         observation = self._get_obs()
         info = self._get_info()
 
-        return observation, reward.value, False, truncated, info
+        return observation, reward, False, truncated, info
 
     def render(self) -> Union[RenderFrame, list[RenderFrame], None]:
         return self._map
