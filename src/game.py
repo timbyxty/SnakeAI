@@ -1,7 +1,7 @@
 import gymnasium
 import pygame.event
 from snake_gym import Tile
-from utils import ReplayBuffer
+from .utils import ReplayBuffer
 
 class Game:
     _tile_to_color = {
