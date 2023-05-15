@@ -45,11 +45,11 @@ class SnakeEnv(gym.Env):
         self.observation_space = gym.spaces.Box(0, TILE_COUNT, shape=self._size, dtype=np.int8)
         self.action_space = gym.spaces.Discrete(4)
         self._action_to_move = {
-            Move.LEFT: np.array([-1, 0]),
-            Move.UP: np.array([0, -1]),
-            Move.DOWN: np.array([0, 1]),
-            Move.RIGHT: np.array([1, 0]),
-            Move.NOOP: None
+            0: np.array([-1, 0]),
+            1: np.array([0, -1]),
+            3: np.array([0, 1]),
+            2: np.array([1, 0]),
+            None: None
         }
         self._empty_poses:int = 0
 

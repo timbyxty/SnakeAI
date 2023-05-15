@@ -1,7 +1,7 @@
 import pygame.event
-from snake_gym import Move
 
 class UserAgent:
+    _name = "User"
     last_move = None
 
     def __call__(self, *args, **kwargs):
@@ -19,4 +19,4 @@ class UserAgent:
             self.last_move = value
         else:
             value = self.last_move
-        return Move(value)
+        return value

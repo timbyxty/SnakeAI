@@ -1,5 +1,5 @@
 from gymnasium.envs.registration import register
-from snake_gym.envs.snake_env import Tile, Move
+from snake_gym.envs.snake_env import Tile
 
 
 register(

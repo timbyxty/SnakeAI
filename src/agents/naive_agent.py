@@ -1,5 +1,5 @@
 import pygame.event
-from snake_gym import Tile, Move
+from snake_gym import Tile
 import random
 import time
 
@@ -48,4 +48,4 @@ class NaiveAgent:
             move = NaiveAgent.find_move(map, head, Tile.TAIL.value)
         if move is None:
             move = random.choice(range(4))
-        return Move(move)
+        return move
