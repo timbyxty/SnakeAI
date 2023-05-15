@@ -68,12 +68,15 @@ class SnakeEnv(gym.Env):
     def _set_food(self):
         self._map[self._get_random_empty_pos()] = Tile.FOOD.value
 
-    def _set_snake_head(self):
+    def _set_snake(self):
         self._snake = deque()
         head_pos = self._get_random_empty_pos()
+        body_pos = ((head_pos[0] + 1)%self._size[0] , head_pos[1])
+        print(head_pos, body_pos)
         self._map[head_pos] = Tile.HEAD.value
-        self._snake.appendleft(head_pos)
-        self._empty_poses -= 1
+        self._map[body_pos] = Tile.BODY.value
+        self._snake.extendleft([head_pos, body_pos])
+        self._empty_poses -= 2
 
     def _set_obstacle(self):
         if self._obstacles:
@@ -87,7 +90,7 @@ class SnakeEnv(gym.Env):
         super().reset(seed=seed)
         self._empty_poses = np.prod(self._size)
         self._map.fill(Tile.EMPTY.value)
-        self._set_snake_head()
+        self._set_snake()
         self._set_food()
         self._set_obstacle()
 
