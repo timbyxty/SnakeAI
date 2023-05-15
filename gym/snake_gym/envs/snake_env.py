@@ -70,10 +70,12 @@ class SnakeEnv(gym.Env):
         self._snake = deque()
         head_pos = self._get_random_empty_pos()
         body_pos = ((head_pos[0] + 1)%self._size[0] , head_pos[1])
+        tail_pos = ((head_pos[0] + 2)%self._size[0] , head_pos[1])
         self._map[head_pos] = Tile.HEAD.value
         self._map[body_pos] = Tile.BODY.value
-        self._snake.extendleft([head_pos, body_pos])
-        self._empty_poses -= 2
+        self._map[tail_pos] = Tile.TAIL.value
+        self._snake.extendleft([tail_pos, body_pos, head_pos])
+        self._empty_poses -= 3
 
     def _set_obstacle(self):
         if self._obstacles:
@@ -126,8 +128,7 @@ class SnakeEnv(gym.Env):
         else:
             self._map[self._snake.pop()] = Tile.EMPTY.value
         self._map[next_head] = Tile.HEAD.value
-        if len(self._snake) != 1:
-            self._map[self._snake[-1]] = Tile.TAIL.value
+        self._map[self._snake[-1]] = Tile.TAIL.value
 
         observation = self._get_obs()
         info = self._get_info()
