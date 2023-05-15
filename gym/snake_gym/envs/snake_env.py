@@ -29,8 +29,8 @@ class Move(Enum):
 
 class Rewards(Enum):
     ALIVE = -1
-    FED = 100
-    DIED = -1000
+    FED = 10
+    DIED = -100
     IDLE = 0
 
 
@@ -39,11 +39,9 @@ class SnakeEnv(gym.Env):
     def __init__(self, size=(5, 5), obstacles=False):
         self._size = np.array(size)
         self._snake: deque = deque()
-        self.head_history = []
         self._obstacles: bool = obstacles
         self._obstacles_limit = np.prod(self._size) // 25
         self._map = np.zeros(self._size, dtype=np.int8)
-        # self.observation_space = gym.spaces.Space(size, np.int8)
         self.observation_space = gym.spaces.Box(0, TILE_COUNT, shape=self._size, dtype=np.int8)
         self.action_space = gym.spaces.Discrete(4)
         self._action_to_move = {
@@ -72,7 +70,6 @@ class SnakeEnv(gym.Env):
         self._snake = deque()
         head_pos = self._get_random_empty_pos()
         body_pos = ((head_pos[0] + 1)%self._size[0] , head_pos[1])
-        print(head_pos, body_pos)
         self._map[head_pos] = Tile.HEAD.value
         self._map[body_pos] = Tile.BODY.value
         self._snake.extendleft([head_pos, body_pos])
@@ -126,14 +123,8 @@ class SnakeEnv(gym.Env):
                 observation = self._get_obs()
                 info = self._get_info()
                 return observation, reward, True, True, info
-            self.head_history.clear()
         else:
             self._map[self._snake.pop()] = Tile.EMPTY.value
-            if next_head in self.head_history:
-                reward -= 1
-            self.head_history.append(next_head)
-        if len(self.head_history) > 5:
-            self.head_history.pop(0)
         self._map[next_head] = Tile.HEAD.value
         if len(self._snake) != 1:
             self._map[self._snake[-1]] = Tile.TAIL.value
