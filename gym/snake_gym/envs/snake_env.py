@@ -41,8 +41,8 @@ class SnakeEnv(gym.Env):
         self._snake: deque = deque()
         self._obstacles: bool = obstacles
         self._obstacles_limit = np.prod(self._size) // 25
-        self._map = np.zeros(self._size, dtype=np.int8)
-        self.observation_space = gym.spaces.Box(0, TILE_COUNT, shape=self._size, dtype=np.int8)
+        self._map = np.zeros(self._size)
+        self.observation_space = gym.spaces.Box(0, TILE_COUNT, shape=self._size)
         self.action_space = gym.spaces.Discrete(4)
         self._action_to_move = {
             0: np.array([-1, 0]),
