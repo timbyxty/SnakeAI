@@ -19,16 +19,8 @@ class Tile(Enum):
 TILE_COUNT = 6
 
 
-class Move(Enum):
-    NOOP = None
-    LEFT = 0
-    UP = 1
-    RIGHT = 2
-    DOWN = 3
-
-
 class Rewards(Enum):
-    ALIVE = -1
+    ALIVE = 0
     FED = 10
     DIED = -100
     IDLE = 0
