@@ -26,7 +26,7 @@ class DQNet(nn.Module):
             nn.ReLU(),
             nn.Flatten()
         )
-        self.linear = nn.Linear(32*5*5 + 2, 4)
+        self.linear = nn.Linear(32*20*20 + 2, 4)
         
     
     def forward(self, x):
@@ -49,26 +49,23 @@ class QTrainer:
         next_state = torch.tensor(next_state,dtype=torch.float)
         action = torch.tensor(action,dtype=torch.long)
         reward = torch.tensor(reward,dtype=torch.float)
-
+        done = torch.tensor(done, dtype=torch.bool)
 
         if len(state.shape) < 3: 
             state = torch.unsqueeze(state, 0)
             next_state = torch.unsqueeze(next_state, 0)
             action = torch.unsqueeze(action, 0)
             reward = torch.unsqueeze(reward, 0)
-            done = (done, )
-
-        
+            done = torch.unsqueeze(done, 0)
         pred = self.model(state)
         target = pred.clone()
-        for idx in range(len(done)):
-            Q_new = reward[idx]
-            if not done[idx]:
-                Q_new = reward[idx] + self.gamma * pred[idx].argmax()
-            target[idx][action[idx]] = Q_new 
+        Q_new = reward.clone()
+        not_done = ~done
+        Q_new[not_done] = reward[not_done] + self.gamma * pred[not_done].argmax(axis=1)
+        target[np.arange(len(target)), action] = Q_new
 
         self.optimer.zero_grad()
-        loss = self.criterion(target,pred)
+        loss = self.criterion(target, pred)
         loss.backward()
 
         self.optimer.step()
@@ -83,9 +80,9 @@ class NeuroAgent:
         self.name = name
         self.inference = False
         self.n_game = 0
-        self.epsilon = 1 # Randomness
-        self.gamma = 0.9 # discount rate
-        self.memory = deque(maxlen=MAX_MEMORY) # popleft()
+        self.epsilon = 1 
+        self.gamma = 0.9 
+        self.memory = deque(maxlen=MAX_MEMORY) 
         self.model = DQNet()
         self.trainer = QTrainer(self.model,lr=LR,gamma=self.gamma)
 
@@ -124,3 +121,124 @@ class NeuroAgent:
         self.inference = True
         self.model.load_state_dict(torch.load(path))
         self.model.eval()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,7 +1,6 @@
 import pygame.event
 from snake_gym import Tile
 import random
-import time
 
 class NaiveAgent:
     queue = []
@@ -45,7 +44,7 @@ class NaiveAgent:
         head = self.get_pos(map, Tile.HEAD.value)
         move = self.find_move(map, head, Tile.FOOD.value)
         if move is None:
-            move = NaiveAgent.find_move(map, head, Tile.TAIL.value)
+            move = self.find_move(map, head, Tile.TAIL.value)
         if move is None:
             move = random.choice(range(4))
         return move

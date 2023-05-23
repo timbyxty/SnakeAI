@@ -2,3 +2,4 @@ gymnasium
 pygame
 torch
 matplotlib
+gif

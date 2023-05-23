@@ -23,17 +23,17 @@ def plot(scores, mean_scores, name=False):
         plt.show(block=False)
     
 
-LR = 0.01
-exp_name = f"5x5_{LR=}"
+LR = 0.0001
+exp_name = f"20x20_{LR=}"
 if os.path.isdir(f"Models/{exp_name}"):
     shutil.rmtree(f"Models/{exp_name}")
-os.mkdir(f"Models/{exp_name}")
+os.mkdir(f"Models/{exp_name}") 
 
 plot_scores = []
 plot_mean_scores = []
 record = float("-inf")
 agent = NeuroAgent(exp_name, LR)
-env = gym.make('snake_gym/Snake-v1.0', size=(5, 5), obstacles=False)
+env = gym.make('snake_gym/Snake-v1.0', size=(20, 20), obstacles=False)
 state, _  = env.reset()
 score = 0
 step = 0
@@ -44,11 +44,9 @@ while True:
     action = agent(state_old)
     state, reward, done, _, _ = env.step(action)
     score += reward
-    # train short memory
     agent.train_short_memory(state_old, action,reward, state,done)
 
-    #remember
-    agent.remember(state_old, action,reward, state,done)
+    agent.remember(state_old, action,reward, state, done)
     if step == 1000:
         done = True
         step = 0
@@ -63,7 +61,7 @@ while True:
         mean_score = np.mean(plot_scores[-50:])
         plot_mean_scores.append(mean_score)
         if mean_score > record:
-            print(agent.epsilon)
+            print(agent.epsilon, agent.n_game)
             # plot(plot_scores, plot_mean_scores)
 
             record = mean_score

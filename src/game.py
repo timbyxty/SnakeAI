@@ -34,7 +34,7 @@ class Game:
             self.clock.tick(self.speed)
             pygame.display.flip()
         truncated = False
-        replay = ReplayBuffer(1000)
+        replay = ReplayBuffer(10000)
         while True:
             if not truncated:
                 action = self.agent(observation)

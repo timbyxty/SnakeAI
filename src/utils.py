@@ -2,7 +2,8 @@ import random
 import numpy as np
 from datetime import datetime
 import pickle
-
+import gif
+import matplotlib.pyplot as plt
 
 class ReplayBuffer(object):
 
@@ -40,5 +41,16 @@ class ReplayBuffer(object):
         return np.array(states), np.array(actions), np.array(rewards), np.array(next_states), np.array(is_done)
     
     def save(self, name):
+        self.make_gif(name)
         with open(f"{name}-{datetime.now()}.pkl", "wb") as f:
             pickle.dump(self, f)
+
+    def make_gif(self, name):
+        @gif.frame
+        def frame(i):
+            plt.title(f"{name} agent")
+            plt.axis('off')
+            plt.imshow(self._storage[i][0])
+        
+        frames = [frame(i) for i in range(len(self._storage))]
+        gif.save(frames, path=f"{name}-{datetime.now()}.gif", duration=1)
